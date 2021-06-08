@@ -1,40 +1,3 @@
-class Account {
-    constructor(accountHolderName, accountNumber) {
-        this._accountHolderName = this.accountHolderName;
-        this._accountNumber = accountNumber;
-        this._balance = 0;
-        this._maximumBalance = 100000;
-        this._minimumBalance = 0;
-    }
-
-    get balance() {
-        return this._balance
-    }
-
-    get accountNumber() {
-        return this._accountNumber
-    }
-
-    get minimumBalance(){
-        return this._maximumBalance
-    }
-
-    get maximumBalance(){
-        return this._maximumBalance
-    }
-
-    addToBalance(amount) {
-        this._balance = this._balance + amount;
-        return true
-    }
-
-    subtractFromBalance(amount) {
-        this._balance = this._balance - amount;
-        return true
-    }
-}
-
-
 class Deposit {
     constructor() {
         this._maxAmount = 50000;
@@ -43,91 +6,113 @@ class Deposit {
         this._depositHistory = {};
     }
 
-    addAccountToDepositHistory(accountNumber){
-        this._depositHistory[accountNumber] = [];
+    addAccountToDepositHistory(accountNumber) {
+        this._depositHistory[accountNumber] = {};
     }
 
-    addCountToDepositHistory(accountNumber, dateString){
-        this._depositHistory[accountNumber].push(
-            dateString: 0
-        )
+    addCountToDepositHistory(accountNumber, dateString) {
+        this._depositHistory[accountNumber][dateString] = 0;
     }
 
-    incrementDepositCount(accountNumber, dateString){
-        this._depositHistory[accountNumber].forEach(
-            (deposit) => {
-                if(deposit.dateString === dateString)
-                {
-                    deposit.dateString = deposit.dateString + 1;
-                }
-            }
-        )
+    incrementDepositCount(accountNumber, dateString) {
+        this._depositHistory[accountNumber][dateString]++;
     }
 
-    findDepositCountByDate(accountNumber, dateString){
-        let res = this._depositHistory[accountNumber].filter(
-            (deposit) => Ddposit.DepositDate === dateString
-        )
-
-        if (res.length === 0){
-            this.addCountToDepositHistory(dateString)
-            return 0
+    findDepositCountByDate(accountNumber, dateString) {
+        if (this._depositHistory[accountNumber] === undefined) {
+            this.addAccountToDepositHistory(accountNumber);
         }
+        let res = this._depositHistory[accountNumber][dateString];
 
-        return res[0][dateString]
-    }
-
-    isBelowMaxAmount(depositAmount) {
-        if(depositAmount<this._maxAmount)
-        {
-            return false
+        if (res === undefined) {
+            this.addCountToDepositHistory(accountNumber, dateString);
+            return 0;
         }
-        return true
+        return res;
     }
 
-    isAboveMinAmount(depositAmount) {
-        if(depositAmount>this._minAmount){
-            return true
+    isAboveMaxAmount(depositAmount) {
+        if (depositAmount > this._maxAmount) {
+            console.log(
+                "DEPOSIT FAILED: Deposit amount cannot be greater than : " +
+                    this._maxAmount
+            );
+            return true;
         }
-        return false
+        return false;
     }
 
+    isBelowMinAmount(depositAmount) {
+        if (depositAmount < this._minAmount) {
+            console.log(
+                "DEPOSIT FAILED: Deposit amount cannot be lesser than : " +
+                    this._minAmount
+            );
+            return true;
+        }
+        return false;
+    }
 
-    isBelowDepositLimit(accountNumber) {
+    isNotBelowDepositLimit(accountNumber) {
         let today = new Date().toLocaleDateString();
         let depositCount = this.findDepositCountByDate(accountNumber, today);
-        if(depositCount<=this._noOfDepositsPerDay){
-            return true
+        if (depositCount < this._noOfDepositsPerDay) {
+            return false;
         }
-        return false
+        console.log(
+            "DEPOSIT FAILED: Only " +
+                this._noOfDepositsPerDay +
+                " deposits Allowed in a day for account " +
+                accountNumber
+        );
+        return true;
     }
 
-    isAboveMinimumBalance(accountObj, depositAmount) {
+    isNotBelowMaximumBalance(accountObj, depositAmount) {
         let postBalance = accountObj.balance + depositAmount;
-        if (accountObj.maximumBalance <= postBalance) {
-            return true
+        if (accountObj.maximumBalance >= postBalance) {
+            return false;
         }
-        return false
+        console.log(
+            "DEPOSIT FAILED: Account Balance cannot exceed more than " +
+                accountObj.maximumBalance +
+                " for the account " +
+                accountObj.accountNumber
+        );
+        return true;
     }
 
     isDepositPossible(accountObj, depositAmount) {
         let accountNumber = accountObj.accountNumber;
-        if(
-            this.isBelowDepositLimit(accountNumber, depositAmount) ||
-            !this.isAboveMinAmount(depositAmount) ||
-            !this.isBelowMaxAmount(depositAmount) ||
-            this.isAboveMinimumBalance(depositAmount)
-        ){
-            return false
+        if (
+            this.isNotBelowDepositLimit(accountNumber) ||
+            this.isBelowMinAmount(depositAmount) ||
+            this.isAboveMaxAmount(depositAmount) ||
+            this.isNotBelowMaximumBalance(accountObj, depositAmount)
+        ) {
+            return false;
         }
-        return true
+        return true;
     }
-
 
     depositAmount(accountObj, depositAmount) {
-        if(!this.isDepositPossible(accountObj, depositAmount)){
-            return false
+        if (!this.isDepositPossible(accountObj, depositAmount)) {
+            return false;
         }
-        return accountObj.addToBalance(depositAmount);
+        let postBalance = accountObj.balance + depositAmount;
+        accountObj.balance = postBalance;
+        let today = new Date().toLocaleDateString();
+        this.incrementDepositCount(accountObj.accountNumber, today);
+
+        console.log(
+            "TRANSACTION (Deposit) SUCCESSFUL: Current Balance for account " +
+                accountObj.accountNumber +
+                ": " +
+                postBalance
+        );
+
+        return true;
     }
 }
+
+module.exports = Deposit;
