@@ -1,32 +1,7 @@
 const assert = require("assert");
 
-const Transaction = require("./Transaction");
+const Transaction = require("./app/Transaction");
 const transactionObj = new Transaction();
-// console.log(transactionObj.createAccount("Madhan"));
-// console.log(transactionObj.createAccount("Madhan2"));
-// console.log(transactionObj.depositAmount(1000, 100001));
-// console.log(transactionObj.depositAmount(1000, 5000));
-// console.log(transactionObj.depositAmount(1000, 499));
-// console.log(transactionObj.depositAmount(1000, 50001));
-// console.log(transactionObj.depositAmount(1000, 50000));
-// console.log(transactionObj.depositAmount(1000, 500));
-// console.log(transactionObj.depositAmount(1000, 500));
-// // console.log(transactionObj.depositAmount(1002, 500));
-
-// console.log(transactionObj.withdrawAmount(1000, 10));
-// console.log(transactionObj.withdrawAmount(1000, 25000));
-// console.log(transactionObj.withdrawAmount(1000, 25001));
-// console.log(transactionObj.withdrawAmount(1000, 25000));
-// console.log(transactionObj.withdrawAmount(1000, 25000));
-// console.log(transactionObj.withdrawAmount(1000, 1000));
-// // console.log(transactionObj.withdrawAmount(1000, 1000));
-
-// // console.log(transactionObj.transferAmount(1000, 1001, 2001));
-// // console.log(transactionObj.withdrawAmount(1000, 25000));
-// // console.log(transactionObj.withdrawAmount(1000, 25000));
-// // console.log(transactionObj.withdrawAmount(1000, 1000));
-// // console.log(transactionObj.withdrawAmount(1000, 1000));
-// // console.log(transactionObj.withdrawAmount(1000, 1000));
 
 describe("Madatory Tests", () => {
     before(() => {
