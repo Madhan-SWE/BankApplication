@@ -2,7 +2,7 @@
   "name": "bankapplication",
   "version": "1.0.0",
   "description": "",
-  "main": "Account.js",
+  "main": "Transaction.js",
   "scripts": {
     "test": "mocha --recursive --exit"
   },
